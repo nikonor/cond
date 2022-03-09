@@ -13,31 +13,31 @@ import (
 //			bool - условие выполнено
 //			err - ошибка
 func OK(in string, data map[string]string) (bool, error) {
-	
+
 	in = strings.TrimSpace(in)
-	
+
 	if err := checkCond(in); err != nil {
 		return false, err
 	}
-	
+
 	in = fillFromMap(in, data)
 	if strings.Contains(in, "$$") {
 		return false, ErrIncompleteData
 	}
-	
+
 	runeIn := []rune(in)
 	cmdArray, max, _ := setIndexes(runeIn)
-	
+
 	// for m := 1; m <= max; m++ {
 	// бежим по условиям снизу вверх
 	for m := max; m >= 1; m-- {
-		
+
 		var (
 			b, e  int
 			flag  bool
 			tasks []task
 		)
-		
+
 		// ищем условия заданного уровня
 		for idx, d := range cmdArray {
 			if d == m {
@@ -55,7 +55,7 @@ func OK(in string, data map[string]string) (bool, error) {
 				}
 			}
 		}
-		
+
 		// TODO: делаем замену
 		for _, t := range tasks {
 			c := task2cond(t.s)
@@ -71,15 +71,15 @@ func OK(in string, data map[string]string) (bool, error) {
 			}
 			runeIn = put(t.b, t.e+1, runeIn, []rune(p))
 		}
-		
+
 	}
-	
+
 	if strings.TrimSpace(string(runeIn)) == F {
 		return false, nil
 	}
-	
+
 	return true, nil
-	
+
 }
 
 func fillFromMap(in string, m map[string]string) string {
@@ -98,11 +98,11 @@ func put(b, e int, sourse, sub []rune) []rune {
 	if b+subLen > sourceLen {
 		return sourse
 	}
-	
+
 	if e > sourceLen {
 		e = sourceLen
 	}
-	
+
 	count := 0
 	for i := b; i < b+subLen; i++ {
 		sourse[i] = sub[count]
@@ -122,27 +122,27 @@ func task2cond(s []rune) *cond {
 	)
 	ss := strings.TrimSpace(string(s[1 : len(s)-1]))
 	sss := strings.Split(ss, " ") // rSpaces.Split(ss, -1)
-	
+
 	if len(sss) < 2 {
 		return nil
 	}
-	
+
 	c.sAction = sss[0]
 	if c.iAction, ok = getIdxCmd(c.sAction); !ok {
 		return nil
-		
+
 	}
-	
+
 	c.f, count = getString(sss[1:])
 	if c.iAction != CmdNot {
 		c.s, _ = getString(sss[1+count:])
 	}
-	
+
 	return &c
 }
 
 func getString(ss []string) (string, int) {
-	
+
 	if len(ss) == 0 {
 		return "", 0
 	}
@@ -154,7 +154,7 @@ func getString(ss []string) (string, int) {
 		}
 		return "", 0
 	}
-	
+
 	var ret []string
 	ret = append(ret, ss[0][1:])
 	var i int
@@ -165,7 +165,7 @@ func getString(ss []string) (string, int) {
 		}
 		ret = append(ret, ss[i])
 	}
-	
+
 	return strings.Join(ret, " "), len(ret)
 }
 
@@ -173,31 +173,31 @@ func getIdxCmd(s string) (int, bool) {
 	switch s {
 	case EQ:
 		return CmdEQ, true
-	
+
 	case NE:
 		return CmdNE, true
-	
+
 	case GT:
 		return CmdGT, true
-	
+
 	case LT:
 		return CmdLT, true
-	
+
 	case GTE:
 		return CmdGTE, true
-	
+
 	case LTE:
 		return CmdLTE, true
-	
+
 	case AND:
 		return CmdAND, true
-	
+
 	case OR:
 		return CmdOR, true
-	
+
 	case NOT:
 		return CmdNot, true
-	
+
 	default:
 		return 0, false
 	}
@@ -209,7 +209,7 @@ func getCondition(in []rune, b int, e int) []rune {
 
 func setIndexes(in []rune) ([]int, int, error) {
 	l := len(in)
-	
+
 	var (
 		cmdArray  = make([]int, l)
 		max, val  = 1, 1
@@ -239,7 +239,7 @@ func setIndexes(in []rune) ([]int, int, error) {
 			}
 		}
 	}
-	
+
 	return cmdArray, max, nil
 }
 
@@ -256,18 +256,18 @@ func checkCond(in string) error {
 		!strings.Contains(in, " ") {
 		return ErrParseCond
 	}
-	
+
 	if !checkBrackets(in) {
 		return ErrParseCond
 	}
-	
+
 	return nil
 }
 
 func checkBrackets(in string) bool {
 	count := 0
-	for _, i := range in {
-		switch i {
+	for i := 0; i < len(in); i++ {
+		switch in[i] {
 		case '(':
 			count++
 		case ')':
@@ -277,7 +277,7 @@ func checkBrackets(in string) bool {
 			return false
 		}
 	}
-	
+
 	return count == 0
 }
 
