@@ -84,7 +84,7 @@ func OK(in string, data map[string]string) (bool, error) {
 
 func fillFromMap(in string, m map[string]string) string {
 	for k, v := range m {
-		if strings.Contains(v, " ") {
+		if strings.Contains(v, " ") || len(v) == 0 {
 			v = `"` + v + `"`
 		}
 		in = strings.Replace(in, "$$"+k+"$$", v, -1)
@@ -156,14 +156,18 @@ func getString(ss []string) (string, int) {
 	}
 
 	var ret []string
-	ret = append(ret, ss[0][1:])
-	var i int
-	for i = 1; i < len(ss); i++ {
-		if strings.HasSuffix(ss[i], `"`) && !strings.HasSuffix(ss[i], `\"`) {
-			ret = append(ret, ss[i][:len(ss[i])-1])
-			break
+	if ss[0] == `""` {
+		ret = append(ret, ss[0])
+	} else {
+		ret = append(ret, ss[0][1:])
+		var i int
+		for i = 1; i < len(ss); i++ {
+			if strings.HasSuffix(ss[i], `"`) && !strings.HasSuffix(ss[i], `\"`) {
+				ret = append(ret, ss[i][:len(ss[i])-1])
+				break
+			}
+			ret = append(ret, ss[i])
 		}
-		ret = append(ret, ss[i])
 	}
 
 	return strings.Join(ret, " "), len(ret)
