@@ -40,7 +40,7 @@ func Test_checkCond(t *testing.T) {
 }
 
 func Test_setIndexes(t *testing.T) {
-	
+
 	tests := []struct {
 		name  string
 		in    []rune
@@ -82,7 +82,7 @@ func Test_setIndexes(t *testing.T) {
 }
 
 func TestOK(t *testing.T) {
-	
+
 	tests := []struct {
 		name    string
 		in      string
@@ -174,7 +174,7 @@ func TestOK(t *testing.T) {
 			want:    false,
 			wantErr: false,
 		},
-		
+
 		{
 			name: "(and (eq $$msisdn$$ 79876543210)  (gt $$age$$ 22))",
 			//
@@ -314,6 +314,27 @@ func TestOK(t *testing.T) {
 			in:      `(eq $$f$$ \(foo\))`,
 			m:       map[string]string{"f": "(foo)"},
 			wantErr: true,
+		},
+		{
+			name:    `empty field value ("" eq "")`,
+			want:    true,
+			in:      `(eq $$f$$ "")`,
+			m:       map[string]string{"f": ""},
+			wantErr: false,
+		},
+		{
+			name:    `empty field value`,
+			want:    false,
+			in:      `(eq $$f$$ foo)`,
+			m:       map[string]string{"f": ""},
+			wantErr: false,
+		},
+		{
+			name:    "empty field value (complex)",
+			want:    true,
+			in:      `(and (eq $$f$$ "") (ne $$b$$ ""))`,
+			m:       map[string]string{"f": "", "b": "123"},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
