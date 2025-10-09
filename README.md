@@ -35,8 +35,11 @@ In this case, OK will return false. Because the phone numbers match, but age is 
 ## Command List
 
 ### String Commands
-- eq - elements are equal
-- ne - elements are not equal
+- eq - strings are equal
+- ne - strings are not equal
+- eqi - strings are case-insensitive equal
+- contain - first string contains in second string
+- icontain - first string case-insensitive contains in second string
 
 ### Numeric Commands
 
@@ -51,5 +54,4 @@ For these commands, we convert the given strings into numbers and then compare t
 
 - and - Logical AND
 - or - Logical OR
-- not - Negation
-    - This command accepts only 1 element
+- not - Negation  - This command accepts only 1 element
